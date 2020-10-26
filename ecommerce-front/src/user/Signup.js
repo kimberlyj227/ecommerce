@@ -1,7 +1,8 @@
 import React, {useState} from "react";
+import { Link } from "react-router-dom";
 import Layout from "../core/Layout";
 import { API } from "../config";
-import { Form, Button } from "react-bootstrap"
+import { Form, Button, Alert } from "react-bootstrap"
 
 
 const Signup = () => {
@@ -22,7 +23,7 @@ const Signup = () => {
 
   const signUp = user => {
     // console.log(name, email, password)
-    fetch(`${API}/signup`, {
+    return fetch(`${API}/signup`, {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -40,7 +41,22 @@ const Signup = () => {
 
   const clickSubmit = event => {
     event.preventDefault();
+    setValues({...values, error: false});
     signUp({name, email, password})
+    .then(data => {
+      if(data.error) {
+        setValues({...values, error: data.error, success:false})
+      } else {
+        setValues({
+          ...values,
+          name: "",
+          email: "",
+          password: "",
+          error: "",
+          success: true
+        })
+      }
+    })
   }
 
 
@@ -54,7 +70,8 @@ const Signup = () => {
             type="text" 
             name="name" 
             placeholder="Enter full name" 
-            onChange={handleChange} />
+            onChange={handleChange}
+            value={name} />
         </Form.Group>
 
         <Form.Group controlId="email">
@@ -63,7 +80,8 @@ const Signup = () => {
             type="email" 
             name="email"
             placeholder="Enter email" 
-            onChange={handleChange} />
+            onChange={handleChange}
+            value={email} />
         </Form.Group>
 
         <Form.Group controlId="password">
@@ -72,7 +90,8 @@ const Signup = () => {
             type="password" 
             name="password"
             placeholder="Enter password" 
-            onChange={handleChange} />
+            onChange={handleChange}
+            value={password} />
           <Form.Text className="text-muted">
         Password must be 6 characters or longer and contain a digit.
           </Form.Text>
@@ -83,6 +102,22 @@ const Signup = () => {
     )
   }
 
+  const showError = () => {
+    return (
+      <Alert variant="danger" style={{ display: error ? "" : "none" }}>
+        {error}
+      </Alert>
+    )
+  }
+
+  const showSuccess = () => {
+    return (
+      <Alert variant="info" style={{ display: success ? "" : "none" }}>
+        Account created successfully! Please <Link to="/signin">Sign In</Link>
+      </Alert>
+    )
+  }
+ 
 
   return (
     <Layout
@@ -90,6 +125,8 @@ const Signup = () => {
       description="Sign up to Node React Ecommerce App"
       className="container col-md-8 offset-md-2"
     >
+     {showError()}
+     {showSuccess()}
      {signUpForm()}
      
     </Layout>
