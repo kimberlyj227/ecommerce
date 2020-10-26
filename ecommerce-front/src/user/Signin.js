@@ -1,14 +1,14 @@
 import React, {useState} from "react";
 import { Redirect} from "react-router-dom";
 import Layout from "../core/Layout";
-import { signIn } from "../auth";
+import { signIn, authenticate } from "../auth";
 import { Form, Button, Alert } from "react-bootstrap"
 
 
 const Signin = () => {
   const [values, setValues] = useState({
-    email: "",
-    password: "",
+    email: "buddy@gmail.com",
+    password: "borkk5",
     error: "",
     loading: false,
     redirectToReferrer: false
@@ -29,12 +29,14 @@ const Signin = () => {
       if(data.error) {
         setValues({...values, error: data.error, loading:false})
       } else {
-        setValues({
-          ...values,
-          redirectToReferrer: true
-        })
+        authenticate(data, () => {
+          setValues({
+            ...values,
+            redirectToReferrer: true
+          });
+        });
       }
-    })
+    });
   }
 
   const signUpForm = () => {
