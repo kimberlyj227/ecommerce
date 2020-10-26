@@ -118,3 +118,30 @@ exports.update = (req, res) => {
     })
   })
 }
+
+// *** SELL/RECENT ***//
+// BY SELL = /products?sortBy=sold&order=desc&limit=4
+// BY RECENT = /products?sortBy=createdAt&order=desc&limit=4
+// if no params than all products are returned
+// *** //
+
+exports.list = (req, res) => {
+  let order = req.query.order ? req.query.order : "asc";
+  let sortBy = req.query.sortBy ? req.query.sortBy : "_id";
+  let limit = req.query.limit ? parseInt(req.query.limit) : 10;
+
+  Product.find()
+    .select("-photo")
+    .populate("category")
+    .sort([[sortBy, order]])
+    .limit(limit)
+    .exec((err, products) => {
+      if(err) {
+        return res.status(400).json({
+          message: "Products not found"
+        })
+      }
+      res.send(products)
+    })
+  
+}
