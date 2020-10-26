@@ -15,7 +15,7 @@ const port = process.env.PORT || 8000;
 
 //db connection
 mongoose.connect(
-  process.env.MONGO_URI, { useNewUrlParser: true, useCreateIndex: true }
+  process.env.MONGO_URI || "mongodb://localhost/nodeapi", { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true }
 ).then(() => {
   console.log("DB connected")
 });
