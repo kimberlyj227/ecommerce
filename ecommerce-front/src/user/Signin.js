@@ -1,14 +1,12 @@
 import React from "react";
 
 
-
-const App = () => {
+const Signin = () => {
   return (
     <div>
-      Hello from React
+      Sign In
     </div>
   )
 }
 
-
-export default App;
+export default Signin;
