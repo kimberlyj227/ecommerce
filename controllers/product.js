@@ -14,7 +14,7 @@ exports.productById = (req, res, next, id) => {
     req.product = product
     next();
   });
-}
+};
 
 exports.create = (req, res) => {
   let form = new formidable.IncomingForm();
@@ -55,12 +55,12 @@ exports.create = (req, res) => {
       res.json(result)
     })
   })
-}
+};
 
 exports.read = (req, res) => {
   req.product.photo = undefined;
   return res.json(req.product);
-}
+};
 
 exports.remove = (req, res) => {
   let product = req.product
@@ -117,7 +117,7 @@ exports.update = (req, res) => {
       res.json(result)
     })
   })
-}
+};
 
 // *** SELL/RECENT ***//
 // BY SELL = /products?sortBy=sold&order=desc&limit=4
@@ -164,4 +164,65 @@ exports.listRelated = (req, res) => {
       }
       res.json(products)
     })
-}
+};
+
+exports.listCategories = (req, res) =>{
+  Product.distinct("category", {}, (err, categories) => {
+    if(err) {
+      return res.status(400).json({
+        message: "Products not found"
+      })
+    }
+    res.json(categories)
+  })
+};
+
+// ** LIST BY SEARCH ** //
+// list products by search
+// implement product search in front end
+// make api request based on what user wants
+// ****** //
+
+exports.listBySearch = (req, res) => {
+  let order = req.body.order ? req.body.order : "desc";
+  let sortBy = req.body.sortBy ? req.body.sortBy : "_id";
+  let limit = req.body.limit ? parseInt(req.body.limit) : 100;
+  let skip = parseInt(req.body.skip);
+  let findArgs = {};
+
+  // console.log(order, sortBy, limit, skip, req.body.filters);
+  // console.log("findArgs", findArgs);
+
+  for (let key in req.body.filters) {
+      if (req.body.filters[key].length > 0) {
+          if (key === "price") {
+              // gte -  greater than price [0-10]
+              // lte - less than
+              findArgs[key] = {
+                  $gte: req.body.filters[key][0],
+                  $lte: req.body.filters[key][1]
+              };
+          } else {
+              findArgs[key] = req.body.filters[key];
+          }
+      }
+  }
+
+  Product.find(findArgs)
+      .select("-photo")
+      .populate("category")
+      .sort([[sortBy, order]])
+      .skip(skip)
+      .limit(limit)
+      .exec((err, data) => {
+          if (err) {
+              return res.status(400).json({
+                  error: "Products not found"
+              });
+          }
+          res.json({
+              size: data.length,
+              data
+          });
+      });
+};
