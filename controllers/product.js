@@ -4,7 +4,19 @@ const _ = require("lodash");
 const fs = require("fs");
 const { errorHandler } = require("../helpers/dbErrorHandler")
 
-exports.create = (req, res) =>{
+exports.productById = (req, res, next, id) => {
+  Product.findById(id).exec((err, product) => {
+    if(err || !product) {
+      return res.status(400).json({
+        error: "Product not found"
+      });
+    }
+    req.product = product
+    next();
+  });
+}
+
+exports.create = (req, res) => {
   let form = new formidable.IncomingForm();
   form.keepExtensions = true;
   form.parse(req, (err, fields, files) => {
@@ -20,7 +32,6 @@ exports.create = (req, res) =>{
         error: "All fields are required"
       })
     }
-
 
     let product = new Product(fields);
 
@@ -44,4 +55,9 @@ exports.create = (req, res) =>{
       res.json(result)
     })
   })
+}
+
+exports.read = (req, res) => {
+  req.product.photo = undefined;
+  return res.json(req.product);
 }
