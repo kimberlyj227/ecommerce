@@ -180,10 +180,20 @@ const clickSubmit = e => {
             />
         </Form.Group>
       </Form.Row>
+      
+      <Form.Row>
+        <Button as={Col} variant="outline-info" type="submit">
+          Create Product
+        </Button> 
 
-      <Button variant="outline-info" type="submit">
-        Create Product
-      </Button>
+        <Button as={Col} variant="outline-warning">
+          <Link to="/admin/dashboard" style={{ color: "#ffc107"}}>
+            Back to Dashboard
+          </Link>
+        </Button>
+
+      </Form.Row>
+  
     </Form>
   )
  }
@@ -207,6 +217,8 @@ const clickSubmit = e => {
    }
 
  }
+
+
  
 
   return (
@@ -221,6 +233,7 @@ const clickSubmit = e => {
           {showError()}
           {showSuccess()}
           {newPostForm()}
+      
         </Col>
       </Row>
 
