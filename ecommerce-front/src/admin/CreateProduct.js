@@ -3,7 +3,7 @@ import Layout from "../core/Layout";
 import { isAuthenticated } from "../auth";
 import { Col, Row, Form, Button, Alert } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { createProduct } from "./apiAdmin";
+import { createProduct, getCategories } from "./apiAdmin";
 
 const CreateProduct = () => {
  const { user, token } = isAuthenticated();
@@ -25,8 +25,19 @@ const CreateProduct = () => {
 
  const { name, description, price, categories, category, shipping, quantity, createdProduct, redirectToProfile, formData} = values;
 
+ // load categories and set form data
+ const init = () => {
+   getCategories().then(data => {
+     if(data.error) {
+       setError(data.error)
+     } else {
+       setValues({...values, categories: data, formData: new FormData()})
+     }
+   })
+ }
+
  useEffect(() => {
-    setValues({...values, formData: new FormData()})
+    init();
  }, [])
 
  const handleChange = e => {
@@ -89,11 +100,11 @@ const clickSubmit = e => {
             required
             onChange={handleChange}
             >
-              <option>Choose...</option>
-              <option value={"5f9786b708458ebf9d99f01c"}>Python</option>
-              {/* {categories.map(category => (
-                <option value={category._id}>{category.name}</option>
-              ))} */}
+              <option>Choose Category...</option>
+              
+              {categories && categories.map((category, i) => (
+                <option key={i} value={category._id}>{category.name}</option>
+              ))}
             
         </Form.Control>
       </Form.Group>
@@ -176,7 +187,27 @@ const clickSubmit = e => {
     </Form>
   )
  }
-  
+ 
+ const showError = () => (
+   <Alert variant= "danger" style={{display: error ? "" : "none"}}>
+     {error}
+   </Alert>
+
+ )
+ const showSuccess = () => (
+  <Alert variant="success" style={{display: createdProduct ? "" : "none"}}>
+    <h5>{`${createdProduct} created successfully!`}</h5>
+  </Alert>
+ )
+ const showLoading = () => {
+   if(loading) {
+    <Alert variant="info">
+      <h2>Loading...</h2>
+    </Alert>
+   }
+
+ }
+ 
 
   return (
     <Layout
@@ -186,6 +217,9 @@ const clickSubmit = e => {
     >
       <Row>
         <Col md={{ span: 8, offset: 2 }}>
+          {showLoading()}
+          {showError()}
+          {showSuccess()}
           {newPostForm()}
         </Col>
       </Row>
