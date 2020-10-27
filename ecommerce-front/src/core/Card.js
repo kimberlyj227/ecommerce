@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Card, Button } from "react-bootstrap";
+import ShowImage from "./ShowImage";
 
 const ProductCard = ({ product }) => {
   return (
@@ -10,6 +11,10 @@ const ProductCard = ({ product }) => {
           <h4>{product.name}</h4>
         </Card.Header>
         <Card.Body>
+          <ShowImage 
+            item={product}
+            url="product"
+          />
           <p><strong>Description: </strong>{product.description}</p>
           <p><strong>Price: </strong>${product.price}</p>
           <Link to="/">

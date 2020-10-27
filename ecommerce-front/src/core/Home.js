@@ -39,7 +39,7 @@ const Home = () => {
     <Layout
       title="Home Page"
       description="Node React Ecommerce App"
-      className="container"
+      className="container-fluid"
     >
       <h2 className="mb-2">Best Sellers</h2>
       <Row>
