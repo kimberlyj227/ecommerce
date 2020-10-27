@@ -25,15 +25,26 @@ const Menu = ({ history }) => {
               </Link>
           </li>
 
-          <li className="nav-item">
-            <Link 
-              className="nav-link" 
-              style={isActive(history, "/user/dashboard")} 
-              to="/user/dashboard">
-                Dashboard
-              </Link>
-          </li>
+          {isAuthenticated() && isAuthenticated().user.role === 0 ? (
+            <li className="nav-item">
+              <Link 
+                className="nav-link" 
+                style={isActive(history, "/user/dashboard")} 
+                to="/user/dashboard">
+                  Dashboard
+                </Link>
+            </li>
 
+          ) : (
+            <li className="nav-item">
+              <Link 
+                className="nav-link" 
+                style={isActive(history, "/admin/dashboard")} 
+                to="/admin/dashboard">
+                 Admin Dashboard
+                </Link>
+            </li>
+          )}
 
           {!isAuthenticated() ? (
             <>
