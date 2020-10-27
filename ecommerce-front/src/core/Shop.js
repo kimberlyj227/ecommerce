@@ -3,7 +3,7 @@ import Layout from "./Layout";
 import { getProducts } from "./apiCore";
 import ProductCard from "./Card";
 import { Row, Col, ListGroup } from "react-bootstrap";
-import { getCategories } from "./apiCore";
+import { getCategories, getFilteredProducts } from "./apiCore";
 import Checkbox from "./Checkbox";
 import Radiobox from "./RadioBox";
 import { prices } from "./FixedPrices";
@@ -11,6 +11,9 @@ import { prices } from "./FixedPrices";
 const Shop = () => {
   const [categories, setCategories] = useState([]);
   const [error, setError] = useState(false);
+  const [limit, setLimit] = useState(10);
+  const [skip, setSkip] = useState(0);
+  const [filteredResults, setFilteredResults] = useState([]);
   const [myFilters, setMyFilters] = useState({
     filters: {
       category: [],
@@ -20,16 +23,17 @@ const Shop = () => {
 
   useEffect(() => {
     init();
+    loadFilteredResults(skip, limit, myFilters.filters);
   }, []);
 
   const init = () => {
     getCategories().then(data => {
       if(data.error) {
-        setError(data.error)
+        setError(data.error);
       } else {
-        setCategories(data)
+        setCategories(data);
       }
-    })
+    });
   }
 
   const handleFilters = (filters, filterBy) => {
@@ -40,7 +44,7 @@ const Shop = () => {
        let priceValues = handlePrice(filters);
        newFilters.filters[filterBy] = priceValues;
     }
-
+    loadFilteredResults(myFilters.filters)
     setMyFilters(newFilters);
 
   }
@@ -55,7 +59,19 @@ const Shop = () => {
       }
     }
     return array;
+  };
+
+  const loadFilteredResults = (newFilters) => {
+    getFilteredProducts(skip, limit, newFilters).then(data => {
+      if(data.error) {
+        setError(data);
+      } else {
+        setFilteredResults(data);
+      }
+    });
   }
+
+  
 
   return (
     <Layout
@@ -83,7 +99,15 @@ const Shop = () => {
           </div>
         </Col>
         <Col md={8}>
-          right
+        <Row>
+        {filteredResults.data.map((product, i) => (
+          <ProductCard
+            key={i}
+            product={product}
+          />
+        ))}
+        
+      </Row>
         </Col>
 
       </Row>
