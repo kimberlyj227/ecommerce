@@ -15,7 +15,7 @@ const ProductCard = ({ product }) => {
             item={product}
             url="product"
           />
-          <p><strong>Description: </strong>{product.description}</p>
+          <p><strong>Description: </strong>{product.description.substring(0, 100)}</p>
           <p><strong>Price: </strong>${product.price}</p>
           <Link to="/">
             <Button variant="outline-info" className="m-2">

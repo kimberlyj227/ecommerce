@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Layout from "./Layout";
 import { getProducts } from "./apiCore";
 import ProductCard from "./Card";
-import { Row, Col, ListGroup } from "react-bootstrap";
+import { Row, Col, Button } from "react-bootstrap";
 import { getCategories, getFilteredProducts } from "./apiCore";
 import Checkbox from "./Checkbox";
 import Radiobox from "./RadioBox";
@@ -11,8 +11,9 @@ import { prices } from "./FixedPrices";
 const Shop = () => {
   const [categories, setCategories] = useState([]);
   const [error, setError] = useState(false);
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(6);
   const [skip, setSkip] = useState(0);
+  const [size, setSize] = useState(0);
   const [filteredResults, setFilteredResults] = useState([]);
   const [myFilters, setMyFilters] = useState({
     filters: {
@@ -64,11 +65,37 @@ const Shop = () => {
   const loadFilteredResults = (newFilters) => {
     getFilteredProducts(skip, limit, newFilters).then(data => {
       if(data.error) {
-        setError(data);
+        setError(data.error);
       } else {
-        setFilteredResults(data);
+        setFilteredResults(data.data);
+        setSize(data.size);
+        setSkip(0);
       }
     });
+  };
+
+  const loadMore = () => {
+    let toSkip = skip + limit;
+    getFilteredProducts(toSkip, limit, myFilters.filters)
+      .then(data => {
+        if(data.error) {
+          setError(data.error);
+        } else {
+          setFilteredResults([...filteredResults, ...data.data]);
+          setSize(data.size);
+          setSkip(toSkip);
+        }
+      })
+  }
+
+  const loadMoreButton = () => {
+    return(
+      size > 0 && size >= limit && (
+        <Button variant="warning" className = "mb-5"onClick={loadMore}>
+          Load More
+        </Button>
+      )
+    )
   }
 
   
@@ -99,15 +126,18 @@ const Shop = () => {
           </div>
         </Col>
         <Col md={8}>
-        <Row>
-        {filteredResults.data.map((product, i) => (
-          <ProductCard
-            key={i}
-            product={product}
-          />
-        ))}
-        
-      </Row>
+          <h2 className="mb-4">Products</h2>
+            <Row>
+            {filteredResults.map((product, i) => (
+              <ProductCard
+                key={i}
+                product={product}
+              />
+            ))}
+            <hr/>
+            {loadMoreButton()}
+            
+          </Row>
         </Col>
 
       </Row>
