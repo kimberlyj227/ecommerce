@@ -5,10 +5,18 @@ import ProductCard from "./Card";
 import { Row, Col, ListGroup } from "react-bootstrap";
 import { getCategories } from "./apiCore";
 import Checkbox from "./Checkbox";
+import Radiobox from "./RadioBox";
+import { prices } from "./FixedPrices";
 
 const Shop = () => {
   const [categories, setCategories] = useState([]);
   const [error, setError] = useState(false);
+  const [myFilters, setMyFilters] = useState({
+    filters: {
+      category: [],
+      price: []
+    }
+  })
 
   useEffect(() => {
     init();
@@ -24,7 +32,30 @@ const Shop = () => {
     })
   }
 
-  
+  const handleFilters = (filters, filterBy) => {
+    const newFilters = {...myFilters};
+    newFilters.filters[filterBy] = filters;
+
+    if(filterBy === "price") {
+       let priceValues = handlePrice(filters);
+       newFilters.filters[filterBy] = priceValues;
+    }
+
+    setMyFilters(newFilters);
+
+  }
+
+  const handlePrice = value => {
+    const data = prices;
+    let array = [];
+
+    for (let key in data) {
+      if(data[key]._id === parseInt(value)) {
+        array = data[key].array
+      }
+    }
+    return array;
+  }
 
   return (
     <Layout
@@ -39,8 +70,17 @@ const Shop = () => {
           <ul>
             <Checkbox
               categories={categories}
+              handleFilters={(filters) => handleFilters(filters, "category")}
             />
           </ul>
+
+          <h2>Filter by Price</h2>
+          <div>
+            <Radiobox
+              prices={prices}
+              handleFilters={(filters) => handleFilters(filters, "price")}
+            />
+          </div>
         </Col>
         <Col md={8}>
           right

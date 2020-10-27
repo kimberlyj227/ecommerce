@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from "react";
 import { Form, ListGroup } from "react-bootstrap"
 
-const Checkbox = ({categories}) => {
+const Checkbox = ({categories, handleFilters}) => {
   const [checked, setChecked] = useState([])
 
   const handleToggle = (category) => () => {
@@ -14,14 +14,16 @@ const Checkbox = ({categories}) => {
     } else {
       newCheckedCategoryId.splice(currentCategoryId, 1)
     }
-    console.log(newCheckedCategoryId)
-    setChecked(newCheckedCategoryId)
+    
+    setChecked(newCheckedCategoryId);
+    handleFilters(newCheckedCategoryId);
   }
 
   return categories.map((category, i) => (
         <li key={i} className="list-unstyled">
           <Form.Check 
             onChange={handleToggle(category._id)}
+
             type="checkbox"
             label={category.name}
             value={checked.indexOf(category._id === -1)}
