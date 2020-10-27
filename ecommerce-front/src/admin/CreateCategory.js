@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import Layout from "../core/Layout";
 import { isAuthenticated } from "../auth";
-import { Card, ListGroup, Col, Row, Form, Button } from "react-bootstrap";
+import { Card, ListGroup, Col, Row, Form, Button, Alert } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import { createCategory} from "./apiAdmin";
 
 const CreateCategory = () => {
   const [name, setName] = useState("");
@@ -13,16 +14,56 @@ const CreateCategory = () => {
   const { user, token } = isAuthenticated();
 
   const handleChange = e => {
-    setError("");
+    setError(false);
     setName(e.target.value)
   }
 
   const clickSubmit = e => {
     e.preventDefault();
-    setError("");
+    setError(false);
     setSuccess(false);
     // make request to API to create category
+    createCategory(user._id, token, {name})
+      .then(data => {
+        if(data.error) {
+          setError(true)
+        } else {
+          setError("");
+          setSuccess(true);
+        }
+      })
+    setName("");
   }
+
+  const showSuccess = () => {
+    if(success) {
+      return (
+        <Alert variant="success">
+          <h3> Category created successfully!</h3>
+        </Alert>
+      )
+    }
+  }
+
+  const showError = () => {
+    if(error) {
+      return (
+        <Alert variant="danger">
+          <h3> Category should be unique.</h3>
+        </Alert>
+      )
+    }
+  };
+
+  const goBack = () => {
+    return (
+      <Button variant="warning" className="mt-5">
+        <Link to="/admin/dashboard" className="text-white">
+          Back to Dashboard
+        </Link>
+      </Button>
+    )
+  };
 
   const newCategoryForm = () => (
     <Form onSubmit={clickSubmit}>
@@ -36,11 +77,12 @@ const CreateCategory = () => {
             onChange={handleChange}
             value={name}
             autoFocus
+            required
            />
         </Form.Group>
-        <Button >
+        <Button onClick={clickSubmit} >
           Create Category
-        </Button>
+        </Button >
     </Form>
   )
 
@@ -52,9 +94,13 @@ const CreateCategory = () => {
     >
       <Row>
         <Col md={{ span: 8, offset: 2 }}>
+          {showSuccess()}
+          {showError()}
           {newCategoryForm()}
+          {goBack()}
         </Col>
       </Row>
+
 
     </Layout>
   )
