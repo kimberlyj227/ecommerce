@@ -1,6 +1,7 @@
 import React from "react";
 import { Jumbotron } from "react-bootstrap";
-import Menu from "./Menu"
+import Menu from "./Menu";
+import "../styles.css";
 
 
 const Layout = ({ title = "Title", description ="Description", className, children }) => {
