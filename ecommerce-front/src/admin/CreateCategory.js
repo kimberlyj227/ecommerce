@@ -80,7 +80,7 @@ const CreateCategory = () => {
             required
            />
         </Form.Group>
-        <Button onClick={clickSubmit} >
+        <Button onClick={clickSubmit} variant="outline-info" >
           Create Category
         </Button >
     </Form>
