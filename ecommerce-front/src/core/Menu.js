@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, withRouter } from "react-router-dom";
-import {signOut} from "../auth"
+import { signOut, isAuthenticated } from "../auth"
 
 
 const isActive = (history, path) => {
@@ -24,31 +24,37 @@ const Menu = ({ history }) => {
                 Home
               </Link>
           </li>
-          <li className="nav-item">
-            <Link 
-              className="nav-link" 
-              style={isActive(history, "/signin")} to="/signin">
-                Sign In
-              </Link>
-          </li>
-          <li className="nav-item">
-            <Link 
-              className="nav-link" 
-              style={isActive(history, "/signup")} to="/signup">
-                Sign Up
-              </Link>
-          </li>
+          {!isAuthenticated() ? (
+            <>
+            <li className="nav-item">
+              <Link 
+                className="nav-link" 
+                style={isActive(history, "/signin")} to="/signin">
+                  Sign In
+                </Link>
+            </li>
 
-          <li className="nav-item">
-            <span 
-              className="nav-link" 
-              style={{cursor: "pointer", color:"#fff"}} 
-              onClick={() => signOut(() => {
-                history.push("/");
-              })}>
-                Sign Out
-              </span>
-          </li>
+            <li className="nav-item">
+              <Link 
+                className="nav-link" 
+                style={isActive(history, "/signup")} to="/signup">
+                  Sign Up
+                </Link>
+            </li>
+            </>
+          ) : (
+            <li className="nav-item">
+              <span 
+                className="nav-link" 
+                style={{cursor: "pointer", color:"#fff"}} 
+                onClick={() => signOut(() => {
+                  history.push("/");
+                })}>
+                  Sign Out
+                </span>
+            </li>
+          )}
+
       
       </ul>
     </div>

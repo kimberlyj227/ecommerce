@@ -1,5 +1,17 @@
 import { API } from "../config";
 
+export const isAuthenticated = () => {
+  if(typeof window == "undefined") {
+    return false
+  }
+  
+  if (localStorage.getItem("jwt")) {
+    return JSON.parse(localStorage.getItem("jwt"));
+  } else {
+    return false
+  }
+}
+
 export const signUp = user => {
   // console.log(name, email, password)
   return fetch(`${API}/signup`, {
