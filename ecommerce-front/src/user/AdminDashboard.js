@@ -4,21 +4,21 @@ import { isAuthenticated } from "../auth";
 import { Card, ListGroup, Col, Row } from "react-bootstrap";
 import { Link } from "react-router-dom"
 
-const Dashboard = () => {
+const AdminDashboard = () => {
   const {user: {_id, name, email, role}} = isAuthenticated();
 
-  const userLinks = () => {
+  const adminLinks = () => {
     return (
       <Card className="mb-5">
-        <Card.Header><h4>User Links</h4></Card.Header>
+        <Card.Header><h4>Admin Links</h4></Card.Header>
         <Card.Body>
           <ListGroup>
             <ListGroup.Item>
-              <Link to="/cart">My Cart</Link>
+              <Link to="/create/category">Create Category</Link>
             </ListGroup.Item>
 
             <ListGroup.Item>
-              <Link to="/profile/update">Update Profile</Link>
+              <Link to="/create/product">Create Product</Link>
             </ListGroup.Item>
             
           </ListGroup>
@@ -27,10 +27,10 @@ const Dashboard = () => {
     )
   }
 
-  const userInfo = () => {
+  const adminInfo = () => {
     return (
       <Card className="mb-5">
-        <Card.Header><h4>User Information</h4></Card.Header>
+        <Card.Header><h4>Admin Information</h4></Card.Header>
         <Card.Body>
           <ListGroup>
             <ListGroup.Item><strong>Name:</strong> {name}</ListGroup.Item>
@@ -42,18 +42,7 @@ const Dashboard = () => {
     )
   };
 
-  const userHistory = () => {
-    return (
-      <Card className="mb-5">
-        <Card.Header><h4>Purchase History</h4></Card.Header>
-        <Card.Body>
-          <ListGroup>
-            <ListGroup.Item>Item</ListGroup.Item>
-          </ListGroup>
-        </Card.Body>
-      </Card>
-    )
-  }
+
 
   return (
     <Layout
@@ -63,11 +52,10 @@ const Dashboard = () => {
     >
       <Row>
         <Col md={3}>
-          {userLinks()}
+          {adminLinks()}
         </Col>
         <Col md={9}>
-          {userInfo()}
-          {userHistory()}
+          {adminInfo()}
         </Col>
       </Row>
 
@@ -77,4 +65,4 @@ const Dashboard = () => {
   )
 }
 
-export default Dashboard;
+export default AdminDashboard;
