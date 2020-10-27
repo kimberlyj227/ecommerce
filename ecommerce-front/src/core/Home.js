@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import Layout from "./Layout";
-import { getProducts } from "./apiCore";
+import Search from "./Search";
 import ProductCard from "./Card";
+import { getProducts } from "./apiCore";
 import { Row, Col } from "react-bootstrap";
 
 
@@ -41,6 +42,7 @@ const Home = () => {
       description="Node React Ecommerce App"
       className="container-fluid"
     >
+      <Search />
       <h2 className="mb-2">Best Sellers</h2>
       <Row>
         {productsBySell.map((product, i) => (

@@ -1,5 +1,5 @@
-import React, {useState, useEffect} from "react";
-import { Form, ListGroup } from "react-bootstrap"
+import React, {useState} from "react";
+import { Form } from "react-bootstrap"
 
 const Checkbox = ({categories, handleFilters}) => {
   const [checked, setChecked] = useState([])
