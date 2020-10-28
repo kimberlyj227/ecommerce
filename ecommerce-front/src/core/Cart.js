@@ -7,10 +7,11 @@ import { Row, Col } from "react-bootstrap";
 
 const Cart = () => {
   const [items, setItems] = useState([]);
+  const [run, setRun] = useState(false);
 
   useEffect(() => {
     setItems(getCart())
-  }, []);
+  }, [run]);
 
   const showItems = (items) => {
     return (
@@ -23,6 +24,9 @@ const Cart = () => {
             product={product}
             showAddToCart={false}
             cartUpdate={true}
+            showRemoveItemBtn={true}
+            setRun={setRun}
+            run={run}
           />
         ))}
       </div>
@@ -46,7 +50,7 @@ const Cart = () => {
       
       <Row>
         <Col md={6}>
-          {items.length ? (
+          {items.length > 0 ? (
             showItems(items)
           ) : (
             noItems()

@@ -1,14 +1,23 @@
 import React, {useState} from "react";
 import { Link, Redirect } from "react-router-dom";
 import { Card, Button } from "react-bootstrap";
-import { addItem, updateItem } from "./cartHelpers";
+import { addItem, updateItem, removeItem } from "./cartHelpers";
 import ShowImage from "./ShowImage";
 import moment from "moment";
 
-const ProductCard = ({ product, showViewProductButton = true, showAddToCart = true, cartUpdate=false }) => {
+const ProductCard = ({ 
+  product, 
+  showViewProductButton = true, 
+  showAddToCart = true, 
+  cartUpdate=false, 
+  showRemoveItemBtn= false,
+  setRun = f => f,
+  run = undefined
+}) => {
 
   const [redirect, setRedirect] = useState(false);
   const [count, setCount] = useState(product.count);
+ 
 
   const showViewButton = showViewProductButton => {
     return (
@@ -56,6 +65,7 @@ const ProductCard = ({ product, showViewProductButton = true, showAddToCart = tr
   }
 
   const handleChange = productId => e => {
+    setRun(!run);
     setCount(e.target.value < 1 ? 1 : e.target.value);
     if(e.target.value >= 1) {
       updateItem(productId, e.target.value);
@@ -82,6 +92,18 @@ const ProductCard = ({ product, showViewProductButton = true, showAddToCart = tr
     )
   }
 
+  
+  const removeItemButton = (showRemoveItemBtn) => {
+    return (
+      showRemoveItemBtn && (
+        <Button onClick={() => {removeItem(product._id); setRun(!run)}} variant="outline-danger" className="mt-2 mb-2">
+                Remove from Cart
+        </Button>
+
+      )
+    )
+  }
+
   return (
     
       <Card >
@@ -105,6 +127,7 @@ const ProductCard = ({ product, showViewProductButton = true, showAddToCart = tr
         <Card.Footer>
             {showViewButton(showViewProductButton)}
             {addToCartButton(showAddToCart)}
+            {removeItemButton(showRemoveItemBtn)}
             {showCartUpdateOptions(cartUpdate)}
         </Card.Footer>
       </Card>
