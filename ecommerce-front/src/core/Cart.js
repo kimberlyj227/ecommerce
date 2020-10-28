@@ -35,11 +35,13 @@ const Cart = () => {
   };
 
   const noItems = () => {
-    <h2>
-      Your cart is empty
-      <br/>
-      <Link to="/shop">Continue Shopping</Link>
-    </h2>
+    return (
+      <h2>
+        Your cart is empty
+        <br/>
+        <Link to="/shop">Continue Shopping</Link>
+      </h2>
+    )
   }
 
   return (
@@ -63,6 +65,8 @@ const Cart = () => {
           <hr/>
           <Checkout
             products={items}
+            run={run}
+            setRun={setRun}
           />
         </Col>
         
