@@ -5,14 +5,16 @@ const fs = require("fs");
 const { errorHandler } = require("../helpers/dbErrorHandler")
 
 exports.productById = (req, res, next, id) => {
-  Product.findById(id).exec((err, product) => {
-    if(err || !product) {
-      return res.status(400).json({
-        error: "Product not found"
-      });
-    }
-    req.product = product
-    next();
+  Product.findById(id)
+    .populate("category")
+    .exec((err, product) => {
+      if(err || !product) {
+        return res.status(400).json({
+          error: "Product not found"
+        });
+      }
+      req.product = product
+      next();
   });
 };
 
@@ -170,7 +172,7 @@ exports.listRelated = (req, res) => {
           message: "Products not found"
         })
       }
-      res.json(products)
+      res.json(products);
     })
 };
 
@@ -234,3 +236,26 @@ exports.listBySearch = (req, res) => {
           });
       });
 };
+
+exports.listSearch = (req, res) => {
+  // create query object to hold values
+  const query = {}
+  //assign value to query.nam
+  if(req.query.search) {
+    query.name = {$regex: req.query.search, $options: "i"}
+
+    if(req.query.category && req.query.category != "All"){
+      query.category = req.query.category
+    }
+
+    Product.find(query, (err, products) => {
+      if(err) {
+        return res.status(400).json({
+          error: errorHandler(err)
+        })
+      }
+      res.json(products)
+    }).select("-photo")
+
+  }
+}
