@@ -39,7 +39,7 @@ const Menu = ({ history }) => {
             <Link 
               className="nav-link" 
               style={isActive(history, "/cart")} 
-              to="/shop">
+              to="/cart">
                 Cart {" "} 
                 <sup>
                   <small className="cart-badge">
