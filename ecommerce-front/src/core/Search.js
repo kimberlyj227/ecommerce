@@ -41,6 +41,15 @@ const Search = () => {
     }
   }
 
+  const searchMessage = (searched, results) => {
+    if(searched && results.length) {
+      return `Found ${results.length} products`
+    }
+    if (searched && !results.length) {
+      return `No products found`
+    }
+  }
+
   const searchSubmit = e => {
     e.preventDefault();
     searchData()
@@ -63,7 +72,7 @@ const Search = () => {
                     onChange={handleChange}
                     name="category"
                   >
-                    <option value={"All"}>Choose a Category...</option>
+                    <option value={"All"}>All Categories</option>
                     {categories.map(category => (
                       <option key={category._id} value={category._id}>{category.name}</option>
                     ))}        
@@ -94,14 +103,19 @@ const Search = () => {
 
   const searchedProducts = ( results = []) => {
     return (
-      <Row>
-        {results.map((product, i) => (
-          <ProductCard 
-            product={product}
-            key={i}
-          />
-        ))}
-      </Row>
+      <div>
+        <h2 className="my-4">
+          {searchMessage(searched, results)}
+        </h2>
+        <Row>
+          {results.map((product, i) => (
+            <ProductCard 
+              product={product}
+              key={i}
+            />
+          ))}
+        </Row>
+      </div>
     )
   }
 
