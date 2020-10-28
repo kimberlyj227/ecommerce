@@ -1,20 +1,23 @@
 import React, { useState, useEffect } from "react";
 import DropIn from "braintree-web-drop-in-react";
-import {  getBraintreeClientToken, processPayment } from "./apiCore";
+import {  getBraintreeClientToken, processPayment, createOrder } from "./apiCore";
 import { emptyCart } from "./cartHelpers";
-import {  Button, Alert } from "react-bootstrap";
+import {  Button, Alert, Form } from "react-bootstrap";
 import { isAuthenticated } from "../auth";
 import { Link } from "react-router-dom";
 
 const Checkout =({products, setRun = f => f, run = undefined}) => {
 
   const [data, setData] = useState({
+    loading: false,
     success: false,
     clientToken: null,
     error: "",
     instance: {},
     address: ""
   });
+
+  const { loading, success, clientToken, error, instance, address } = data; 
 
   const userId = isAuthenticated() && isAuthenticated().user._id;
   const token = isAuthenticated() && isAuthenticated().token;
@@ -62,8 +65,9 @@ const Checkout =({products, setRun = f => f, run = undefined}) => {
   const buy = () => {
     // send nonce to server
     // nonce = data.instance.requestPaymentMethod
+    setData({...data, loading: true})
     let nonce;
-    let getNonce = data.instance
+    let getNonce = instance
       .requestPaymentMethod()
       .then(res => {
         // console.log(res)
@@ -77,14 +81,25 @@ const Checkout =({products, setRun = f => f, run = undefined}) => {
         processPayment(userId, token, paymentData)
           .then(response => {
             setData({...data, success: response.success})
+            // create order
+            const createOrderData = {
+              products: products, 
+              transaction_id: response.transaction.id,
+              amount: response.transaction.amount,
+              address: address
+            }
+            createOrder(userId, token, createOrderData)
             //empty cart
             emptyCart(() => {
               setRun(!run)
               console.log("payment success and empty cart")
+              setData({...data, loading: false})
             });
-            // create order
           })
-          .catch(err => console.log(err))
+          .catch(err => {
+            console.log(err) 
+            setData({...data, loading: false})
+          })
       })
       .catch(err => {
         // console.log("drop in error", err)
@@ -115,15 +130,45 @@ const Checkout =({products, setRun = f => f, run = undefined}) => {
     )
   }
 
+  const showLoading = (loading) => {
+    return (
+      <Alert 
+      variant="primary"
+      style= {{ display: loading ? "" : "none"}}
+      >
+        Loading
+      </Alert>
+    )
+  }
+
+  const handleAddress = e => {
+    const {name, value} = e.target;
+    setData({...data, [name]: value});
+  }
+
   const showDropIn = () => {
     return (
       <div onBlur={() => setData({...data, error: ""})}>
         {data.clientToken !== null && products.length > 0 ? (
           <div>
+            <Form.Group className="mb-3">
+              <Form.Label className="text-muted">Delivery Address</Form.Label>
+              <Form.Control 
+                as="textarea" 
+                rows={3}
+                value={address}
+                name="address"
+                placeholder="Type delivery address here..."
+                onChange={handleAddress}
+              />
+            </Form.Group>
             <DropIn options={{
-              authorization: data.clientToken,
+              authorization: clientToken,
+              paypal: {
+                flow: "vault"
+              }
 
-            }} onInstance={instance => (data.instance = instance)}
+            }} onInstance={i => (data.instance = i)}
             />
             <Button onClick={buy} variant="success" className="btn-block">
               Buy Now!
@@ -135,12 +180,15 @@ const Checkout =({products, setRun = f => f, run = undefined}) => {
     )
   }
 
+  
+
 
   return (
     <div>
       <h2> Total: ${getTotal()}</h2>
-      {showSuccess(data.success)}
-      {showError(data.error)}
+      {showLoading(loading)}
+      {showSuccess(success)}
+      {showError(error)}
       {showCheckout()}
 
     </div>
