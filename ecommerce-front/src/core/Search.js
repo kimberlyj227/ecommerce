@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { InputGroup, FormControl, Button, Col, Container, Row, Form, Dropdown, DropdownButton } from "react-bootstrap";
-import { getCategories } from "./apiCore";
+import { Container, Row } from "react-bootstrap";
+import { getCategories, list  } from "./apiCore";
+import ProductCard from "./Card";
 
 const Search = () => {
   const [data, setData] = useState({
@@ -27,13 +28,27 @@ const Search = () => {
     });
   };
 
+  const searchData = () => {
+    if(search) {
+      list({search: search || undefined, category: category})
+        .then(res => {
+          if(res.error) {
+            console.log(res.error)
+          } else {
+            setData({...data, results: res, searched: true})
+          }
+        })
+    }
+  }
+
   const searchSubmit = e => {
     e.preventDefault();
+    searchData()
   }
 
   const handleChange = e => {
     const { name, value } = e.target;
-    setData({...data, [name]: value})
+    setData({...data, [name]: value, searched: false})
   }
 
   const searchForm = () => {
@@ -77,10 +92,28 @@ const Search = () => {
     )
   }
 
+  const searchedProducts = ( results = []) => {
+    return (
+      <Row>
+        {results.map((product, i) => (
+          <ProductCard 
+            product={product}
+            key={i}
+          />
+        ))}
+      </Row>
+    )
+  }
+
   return (
     <Row>
       <Container>
         {searchForm()}
+        
+      </Container>
+
+      <Container fluid>
+        {searchedProducts(results)}
       </Container>
     </Row>
   )
