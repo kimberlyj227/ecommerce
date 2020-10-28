@@ -3,7 +3,7 @@ import Layout from "./Layout";
 import Search from "./Search";
 import ProductCard from "./Card";
 import { getProducts, getBraintreeClientToken } from "./apiCore";
-import { Row, Col, Button } from "react-bootstrap";
+import { Row, Col, Button, Alert } from "react-bootstrap";
 import { isAuthenticated } from "../auth";
 import { Link } from "react-router-dom";
 import DropIn from "braintree-web-drop-in-react";
@@ -61,9 +61,39 @@ const Checkout =({products}) => {
     
   }
 
+  const buy = () => {
+    // send nonce to server
+    // nonce = data.instance.requestPaymentMethod
+    let nonce;
+    let getNonce = data.instance
+      .requestPaymentMethod()
+      .then(res => {
+        console.log(res)
+        nonce = res.nonce
+        // once you have nonce, send as paymentMethodNonce
+        console.log("send none and total to process ", nonce, getTotal(products))
+      })
+      .catch(err => {
+        console.log("drop in error", err)
+        setData({...data, error: err.message})
+      });
+
+  }
+
+  const showError = (error) => {
+    return (
+      <Alert 
+      variant="danger"
+      style= {{ display: error ? "" : "none"}}
+      >
+        {error}
+      </Alert>
+    )
+  }
+
   const showDropIn = () => {
     return (
-      <div>
+      <div onBlur={() => setData({...data, error: ""})}>
         {data.clientToken !== null && products.length > 0 ? (
           <div>
             <DropIn options={{
@@ -71,8 +101,8 @@ const Checkout =({products}) => {
 
             }} onInstance={instance => (data.instance = instance)}
             />
-            <Button variant="success">
-              Checkout
+            <Button onClick={buy} variant="success">
+              Buy Now!
             </Button>
           </div>
 
@@ -85,6 +115,7 @@ const Checkout =({products}) => {
   return (
     <div>
       <h2> Total: ${getTotal()}</h2>
+      {showError(data.error)}
       {showCheckout()}
 
     </div>
