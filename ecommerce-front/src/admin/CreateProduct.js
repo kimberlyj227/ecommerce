@@ -182,7 +182,7 @@ const clickSubmit = e => {
       </Form.Row>
       
       <Form.Row>
-        <Button as={Col} variant="outline-info" type="submit">
+        <Button as={Col} variant="outline-info" type="submit" onClick={clickSubmit}>
           Create Product
         </Button> 
 

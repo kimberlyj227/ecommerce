@@ -128,12 +128,14 @@ const Shop = () => {
         <Col md={8}>
           <h2 className="mb-4">Products</h2>
             <Row>
-            {filteredResults.map((product, i) => (
-              <ProductCard
-                key={i}
-                product={product}
-              />
-            ))}
+                {filteredResults.map((product, i) => (
+                  <div className="col-4 mb-3">
+                    <ProductCard
+                      key={i}
+                      product={product}
+                    />
+                  </div>
+                ))}
             <hr/>
             {loadMoreButton()}
             
