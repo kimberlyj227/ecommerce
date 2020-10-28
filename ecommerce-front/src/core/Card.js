@@ -1,13 +1,14 @@
 import React, {useState} from "react";
 import { Link, Redirect } from "react-router-dom";
 import { Card, Button } from "react-bootstrap";
-import { addItem } from "./cartHelpers";
+import { addItem, updateItem } from "./cartHelpers";
 import ShowImage from "./ShowImage";
 import moment from "moment";
 
-const ProductCard = ({ product, showViewProductButton = true, showAddToCart = true }) => {
+const ProductCard = ({ product, showViewProductButton = true, showAddToCart = true, cartUpdate=false }) => {
 
   const [redirect, setRedirect] = useState(false);
+  const [count, setCount] = useState(product.count);
 
   const showViewButton = showViewProductButton => {
     return (
@@ -54,6 +55,33 @@ const ProductCard = ({ product, showViewProductButton = true, showAddToCart = tr
       );
   }
 
+  const handleChange = productId => e => {
+    setCount(e.target.value < 1 ? 1 : e.target.value);
+    if(e.target.value >= 1) {
+      updateItem(productId, e.target.value);
+    }
+  }
+
+  const showCartUpdateOptions = cartUpdate => {
+    return cartUpdate && (
+      <div> 
+        <div className = "input-group mb3">
+          <div className="input-group-prepend">
+            <span className ="input-group-text">
+              Adjust quantity
+            </span>
+          </div>
+          <input 
+            type="number" 
+            className="form-control" 
+            value={count} 
+            onChange={handleChange(product._id)}
+          />
+        </div>
+      </div>
+    )
+  }
+
   return (
     
       <Card >
@@ -77,6 +105,7 @@ const ProductCard = ({ product, showViewProductButton = true, showAddToCart = tr
         <Card.Footer>
             {showViewButton(showViewProductButton)}
             {addToCartButton(showAddToCart)}
+            {showCartUpdateOptions(cartUpdate)}
         </Card.Footer>
       </Card>
     
