@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Layout from "./Layout";
 import ProductCard from "./Card";
+import Checkout from "./Checkout";
 import { getCart } from "./cartHelpers";
 import { Link } from "react-router-dom";
 import { Row, Col } from "react-bootstrap";
@@ -58,7 +59,11 @@ const Cart = () => {
         </Col>
 
         <Col md={6}>
-          cart checkout options
+          <h2 className="mb-4">Cart Summary</h2>
+          <hr/>
+          <Checkout
+            products={items}
+          />
         </Col>
         
       </Row>
