@@ -23,7 +23,7 @@ const CreateProduct = () => {
  const [error, setError] = useState("");
  const [loading, setLoading] = useState("");
 
- const { name, description, price, categories, category, shipping, quantity, createdProduct, redirectToProfile, formData} = values;
+ const { name, description, price, categories, category, shipping, quantity, createdProduct, formData} = values;
 
  // load categories and set form data
  const init = () => {
@@ -202,13 +202,14 @@ const clickSubmit = e => {
    <Alert variant= "danger" style={{display: error ? "" : "none"}}>
      {error}
    </Alert>
-
  )
+
  const showSuccess = () => (
   <Alert variant="success" style={{display: createdProduct ? "" : "none"}}>
     <h5>{`${createdProduct} created successfully!`}</h5>
   </Alert>
  )
+ 
  const showLoading = () => {
    if(loading) {
     <Alert variant="info">
@@ -217,9 +218,6 @@ const clickSubmit = e => {
    }
 
  }
-
-
- 
 
   return (
     <Layout
