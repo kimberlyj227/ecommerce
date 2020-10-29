@@ -3,16 +3,18 @@ import Layout from "../core/Layout";
 import { isAuthenticated } from "../auth";
 import { Col, Row, Form, Button, Alert, ListGroup } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { listOrders } from "./apiAdmin";
+import { listOrders, getStatusValues } from "./apiAdmin";
 import moment from "moment";
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
+  const [statusValues, setStatusValues] = useState([])
 
   const { user, token } =isAuthenticated();
 
   useEffect(() => {
     loadOrders();
+    loadStatusValues();
   }, [])
 
   const loadOrders = ( ) => {
@@ -21,6 +23,16 @@ const Orders = () => {
         console.log(data.error)
       } else {
         setOrders(data)
+      }
+    });
+  }
+
+  const loadStatusValues = () => {
+    getStatusValues(user._id, token).then(data=> {
+      if(data.error) {
+        console.log(data.error)
+      } else {
+        setStatusValues(data)
       }
     });
   }
@@ -54,6 +66,32 @@ const Orders = () => {
       </div>
     )
   }
+
+  const handleStatusChange = e => {
+    const {name, value} = e.target;
+    console.log("update order status")
+    
+  }
+
+  const showStatus = order => {
+    return (
+      <div className="form-group">
+        <h3 className="mark mb-4">
+          Status: {order.status}
+        </h3>
+        <select 
+          name="status" 
+          className="form-control"
+          onChange={handleStatusChange}
+        >
+          <option>Update Status</option>
+          {statusValues.map((status, i) => (
+            <option value={status} key={i}>{status}</option>
+          ))}
+        </select>
+      </div>
+    )
+  }
   
 
   return (
@@ -79,7 +117,7 @@ const Orders = () => {
 
             <ListGroup className="mb-2">
               <ListGroup.Item>
-                Order status: {o.status}
+                {showStatus(o)}
               </ListGroup.Item>
 
               <ListGroup.Item>
