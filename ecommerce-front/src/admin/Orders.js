@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
 import Layout from "../core/Layout";
 import { isAuthenticated } from "../auth";
-import { Col, Row, Form, Button, Alert, ListGroup } from "react-bootstrap";
-import { Link } from "react-router-dom";
-import { listOrders, getStatusValues } from "./apiAdmin";
+import { Col, Row, ListGroup } from "react-bootstrap";
+import { listOrders, getStatusValues, updateOrderStatus } from "./apiAdmin";
 import moment from "moment";
 
 const Orders = () => {
@@ -15,6 +14,7 @@ const Orders = () => {
   useEffect(() => {
     loadOrders();
     loadStatusValues();
+    
   }, [])
 
   const loadOrders = ( ) => {
@@ -22,6 +22,7 @@ const Orders = () => {
       if(data.error) {
         console.log(data.error)
       } else {
+        console.log(data)
         setOrders(data)
       }
     });
@@ -40,7 +41,9 @@ const Orders = () => {
   const showOrderLength = orders => {
     if(orders.length > 0) {
       return (
-        <h1 className="text-info display-2">Total Orders: {orders.length}</h1>
+        <h1 className="text-info display-2">
+          Total Orders: {orders.length}
+        </h1>
         )
       } else {
         return (
@@ -51,7 +54,7 @@ const Orders = () => {
 
   const showInput = (key, value) => {
     return (
-      <div className="input-group mb-2 mr-2">
+      <div className="input-group mb-2 mr-sm-2">
         <div className="input-group-prepend">
           <div className="input-group-text">
             {key}
@@ -67,9 +70,17 @@ const Orders = () => {
     )
   }
 
-  const handleStatusChange = e => {
-    const {name, value} = e.target;
-    console.log("update order status")
+  const handleStatusChange = (e, orderId) => {
+    
+    updateOrderStatus(user._id, token, orderId, e.target.value).then(
+      data => {
+          if (data.error) {
+              console.log("Status update failed");
+          } else {
+              loadOrders();
+          }
+      }
+  );
     
   }
 
@@ -80,9 +91,8 @@ const Orders = () => {
           Status: {order.status}
         </h3>
         <select 
-          name="status" 
           className="form-control"
-          onChange={handleStatusChange}
+          onChange={(e) => handleStatusChange(e, order._id)}
         >
           <option>Update Status</option>
           {statusValues.map((status, i) => (
