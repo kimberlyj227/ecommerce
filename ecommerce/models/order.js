@@ -7,7 +7,7 @@ const CartItemSchema = new mongoose.Schema({
   count: Number,
   product: {
     type: ObjectId,
-    ref: "product"
+    ref: "Product"
   }
 }, 
 {timestamps: true}
