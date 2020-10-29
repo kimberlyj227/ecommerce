@@ -37,9 +37,24 @@ const Orders = () => {
     }
   };
 
-  const showOrders = (orders) => {
-
+  const showInput = (key, value) => {
+    return (
+      <div className="input-group mb-2 mr-2">
+        <div className="input-group-prepend">
+          <div className="input-group-text">
+            {key}
+          </div>
+        </div>
+        <input 
+          type="text"
+          value={value}
+          className="form-control"
+          readOnly
+        />
+      </div>
+    )
   }
+  
 
   return (
     <Layout
@@ -92,6 +107,20 @@ const Orders = () => {
             <h3 className="my-4 font-italic">
               Total products in the order: {o.products.length}
             </h3>
+
+            {o.products.map((p, pIndex) => (
+              <div 
+                className="mb-4" 
+                key={pIndex}
+                style={{ padding: "20px", border: "2px solid indigo"}}
+              >
+                {showInput("Product name:", p.name)}
+                {showInput("Product price:", p.price)}
+                {showInput("Product total:", p.count)}
+                {showInput("Product Id:", p._id)}
+                
+              </div>
+            ))}
 
 
 
