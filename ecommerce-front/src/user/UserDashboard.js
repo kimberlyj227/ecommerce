@@ -18,7 +18,7 @@ const Dashboard = () => {
             </ListGroup.Item>
 
             <ListGroup.Item>
-              <Link to="/profile/update">Update Profile</Link>
+              <Link to={`/profile/${_id}`}>Update Profile</Link>
             </ListGroup.Item>
             
           </ListGroup>
