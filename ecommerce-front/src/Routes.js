@@ -14,6 +14,7 @@ import Product from "./core/Product";
 import Cart from "./core/Cart";
 import Orders from "./admin/Orders";
 import Profile from "./user/Profile";
+import ManageProducts from "./admin/ManageProducts";
 // import "bootstrap/dist/css/bootstrap.min.css";
 
 
@@ -38,6 +39,7 @@ const Routes = () => {
         <AdminRoute path="/create/category" exact component={CreateCategory} />
         <AdminRoute path="/create/product" exact component={CreateProduct} />
         <AdminRoute path="/admin/orders" exact component={Orders} />
+        <AdminRoute path="/admin/products" exact component={ManageProducts} />
         
 
       </Switch>
