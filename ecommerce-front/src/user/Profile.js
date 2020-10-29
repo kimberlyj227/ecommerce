@@ -1,28 +1,48 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Layout from "../core/Layout";
 import { isAuthenticated } from "../auth";
 import { Card, ListGroup, Col, Row } from "react-bootstrap";
-import { Link } from "react-router-dom"
+import { Link } from "react-router-dom";
+import { read, update, updateUser } from "./apiUser";
 
-const Profile = () => {
-  const {user: {_id, name, email, role}} = isAuthenticated();
+const Profile = ({match}) => {
+  const { token } = isAuthenticated();
+  
+  const [userInfo, setUserInfo] = useState({
+    name: "",
+    email: "",
+    password: ""
+  });
+  const [error, setError] = useState(false);
+  const [success, setSuccess] = useState(false);
 
+  const { name, email, password } = userInfo;
+
+  useEffect(() => {
+    init(match.params.userId);
+  });
+
+  const init = (userId) => {
+    read(userId, token).then(data => {
+      if (data.error) {
+        setError(true)
+      } else {
+        setUserInfo({...userInfo,
+          name: data.name,
+          email: data.email
+        })
+      }
+    });
+  }
   
 
   return (
     <Layout
       title="User Profile"
-      description={`G'day ${name}!`}
+      description={`Hello ${name}! Update your Profile`}
       className="container-fluid"
     >
-      <Row>
-        <Col md={3}>
-          
-        </Col>
-        <Col md={9}>
-          
-        </Col>
-      </Row>
+      <h2>Profile Update</h2>
 
       
 
