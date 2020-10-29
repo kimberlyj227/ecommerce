@@ -111,7 +111,7 @@ export const updateOrderStatus = (userId, token, orderId, status) => {
 
 // get all products
 export const getProducts = () => {
-  return fetch(`${API}/products`, {
+  return fetch(`${API}/products?limit=100`, {
     method: "GET"
   })
   .then(res => {
@@ -137,7 +137,6 @@ export const updateProduct = (productId, token, userId, product) => {
     method: "PUT",
     headers: {
       Accept: "application/json",
-      "Content-Type": "application/json",
       Authorization: `Bearer ${token}`
     },
     body: product
